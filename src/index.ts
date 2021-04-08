@@ -1,8 +1,8 @@
+import { Repository, Sequelize } from 'sequelize-typescript';
 import { DiContainer } from './core/di-container';
-import { Sequelize } from 'sequelize-typescript';
 import { User } from './models';
 
-(() => {
+(async () => {
   const dependencies = DiContainer.getInstance();
   const sequelize = new Sequelize('database', (process.env.USER as unknown) as string, '', {
     dialect: 'postgres',
@@ -10,9 +10,27 @@ import { User } from './models';
     logging: console.log,
     port: 5432,
   });
-  sequelize.addModels([User]);
-  sequelize.sync({
+
+  await sequelize.addModels([User]);
+  await sequelize.sync({
     force: true,
   });
-  // sequelize.getRepository('modelClass');
+
+  // GET REPO
+  const repo: Repository<User> = sequelize.getRepository<User>(User);
+
+  // CREATE USER
+  const status: User = await repo.create({
+    email: 'przemwierzbicki@email.com',
+    password: 'password',
+  });
+
+  // LOG CREATE RETURN VALUE
+  console.log(status);
+
+  // GET USER
+  const user: User | null = await repo.findOne({ where: { id: 1 } });
+
+  // LOG GET RETURN VALUE
+  console.log(user);
 })();
