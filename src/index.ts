@@ -5,9 +5,17 @@ import { DiContainer } from './core/di-container';
   await dependencies.init();
 
   const status = await dependencies.usersTableService.create();
-  const user = await dependencies.usersTableService.findOne(1);
+  // const user = await dependencies.usersTableService.findOne(1);
 
-  console.log(status);
+  const blogPost = await dependencies.blogPostsTableService.create();
+  const comments = await dependencies.commentsTableService.create();
 
-  console.log(user);
+  console.log(blogPost);
+
+  console.log(comments);
 })();
+
+// HOMEWORK
+
+// COMMENTs
+// id, content, UserId, BlogPostId
