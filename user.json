@@ -1,14 +1,14 @@
 {
   "id": 1,
-  "content": "content",
-  "userId": 1,
-  "createdAt": "2021-04-27T13:47:32.532Z",
-  "updatedAt": "2021-04-27T13:47:32.532Z",
-  "user": {
-    "id": 1,
-    "email": "przemwierzbicki@email.com",
-    "password": "password",
-    "createdAt": "2021-04-27T13:47:32.525Z",
-    "updatedAt": "2021-04-27T13:47:32.525Z"
-  }
+  "email": "przemwierzbicki@email.com",
+  "password": "password",
+  "createdAt": "2021-04-27T13:59:44.964Z",
+  "updatedAt": "2021-04-27T13:59:44.964Z",
+  "blogPosts": [
+    { "id": 1, "content": "content", "userId": 1, "createdAt": "2021-04-27T13:59:44.973Z", "updatedAt": "2021-04-27T13:59:44.973Z" },
+    { "id": 2, "content": "content", "userId": 1, "createdAt": "2021-04-27T13:59:44.975Z", "updatedAt": "2021-04-27T13:59:44.975Z" }
+  ],
+  "comments": [
+    { "id": 1, "blogPostId": 1, "content": "content", "userId": 1, "createdAt": "2021-04-27T13:59:44.977Z", "updatedAt": "2021-04-27T13:59:44.977Z" }
+  ]
 }

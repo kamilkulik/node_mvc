@@ -1,5 +1,6 @@
 import { Column, CreatedAt, HasMany, Model, PrimaryKey, Table, UpdatedAt } from 'sequelize-typescript';
 import { BlogPost } from '../blog-post';
+import { Comment } from '../comment';
 
 @Table
 export class User extends Model {
@@ -19,6 +20,9 @@ export class User extends Model {
 
   @HasMany(() => BlogPost)
   public blogPosts?: BlogPost[];
+
+  @HasMany(() => Comment)
+  public comments?: Comment[];
 
   @CreatedAt
   @Column

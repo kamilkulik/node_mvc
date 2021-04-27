@@ -1,4 +1,6 @@
-import { Column, CreatedAt, Model, PrimaryKey, Table, UpdatedAt } from 'sequelize-typescript';
+import { BelongsTo, Column, CreatedAt, ForeignKey, Model, PrimaryKey, Table, UpdatedAt } from 'sequelize-typescript';
+import { BlogPost } from '../blog-post';
+import { User } from '../user';
 
 @Table
 export class Comment extends Model {
@@ -9,13 +11,21 @@ export class Comment extends Model {
   public id?: number;
 
   @Column
-  public blogPostId!: number;
-
-  @Column
   public content!: string;
 
+  @ForeignKey(() => BlogPost)
+  @Column
+  public blogPostId!: number;
+
+  @BelongsTo(() => BlogPost)
+  public blogPost!: BlogPost;
+
+  @ForeignKey(() => User)
   @Column
   public userId!: number;
+
+  @BelongsTo(() => User)
+  public user!: User;
 
   @CreatedAt
   @Column
