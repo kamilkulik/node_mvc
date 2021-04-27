@@ -1,0 +1,14 @@
+{
+  "id": 1,
+  "content": "content",
+  "userId": 1,
+  "createdAt": "2021-04-27T13:47:32.532Z",
+  "updatedAt": "2021-04-27T13:47:32.532Z",
+  "user": {
+    "id": 1,
+    "email": "przemwierzbicki@email.com",
+    "password": "password",
+    "createdAt": "2021-04-27T13:47:32.525Z",
+    "updatedAt": "2021-04-27T13:47:32.525Z"
+  }
+}

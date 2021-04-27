@@ -1,4 +1,5 @@
-import { Column, CreatedAt, Model, PrimaryKey, Table, UpdatedAt } from 'sequelize-typescript';
+import { BelongsTo, Column, CreatedAt, ForeignKey, Model, PrimaryKey, Table, UpdatedAt } from 'sequelize-typescript';
+import { User } from '../user';
 
 @Table
 export class BlogPost extends Model {
@@ -11,8 +12,12 @@ export class BlogPost extends Model {
   @Column
   public content!: string;
 
+  @ForeignKey(() => User)
   @Column
-  public userId!: string;
+  public userId!: number;
+
+  @BelongsTo(() => User)
+  public user!: User;
 
   @CreatedAt
   @Column

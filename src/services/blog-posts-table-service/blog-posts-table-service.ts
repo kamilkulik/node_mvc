@@ -1,5 +1,5 @@
 import { Repository } from 'sequelize-typescript';
-import { BlogPost } from '../../models';
+import { BlogPost, User } from '../../models';
 
 export class BlogPostsTableService implements BlogPostsTableServiceInterface {
   private _repo: Repository<BlogPost>;
@@ -16,7 +16,7 @@ export class BlogPostsTableService implements BlogPostsTableServiceInterface {
   }
 
   public findOne(id: number): Promise<BlogPost | null> {
-    return this._repo.findOne({ where: { id } });
+    return this._repo.findOne({ where: { id }, include: [{ model: User }] });
   }
 }
 

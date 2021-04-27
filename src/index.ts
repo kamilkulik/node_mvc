@@ -1,21 +1,20 @@
+import fs from 'fs';
 import { DiContainer } from './core/di-container';
 
 (async () => {
   const dependencies = DiContainer.getInstance();
   await dependencies.init();
 
-  const status = await dependencies.usersTableService.create();
+  await dependencies.usersTableService.create();
+
+  await dependencies.blogPostsTableService.create();
+  await dependencies.blogPostsTableService.create();
+
+  await dependencies.commentsTableService.create();
+
   // const user = await dependencies.usersTableService.findOne(1);
 
-  const blogPost = await dependencies.blogPostsTableService.create();
-  const comments = await dependencies.commentsTableService.create();
+  const blogPost = await dependencies.blogPostsTableService.findOne(1);
 
-  console.log(blogPost);
-
-  console.log(comments);
+  fs.writeFile('user.json', JSON.stringify(blogPost), (error) => console.error(error));
 })();
-
-// HOMEWORK
-
-// COMMENTs
-// id, content, UserId, BlogPostId
