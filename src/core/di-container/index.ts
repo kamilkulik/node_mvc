@@ -3,6 +3,7 @@ import {
   BlogPostsTableServiceInterface,
   CommentsTableService,
   CommentsTableServiceInterface,
+  DatabaseProvider,
   PlackiService,
   PlackiServiceInterface,
   UsersTableService,
@@ -12,8 +13,6 @@ import { Repository, Sequelize } from 'sequelize-typescript';
 import { BlogPost, Comment, User } from '../../models';
 
 export class DiContainer implements DiContainerInterface {
-  private static _instance?: DiContainer;
-
   private _postgres: Sequelize;
 
   private _blogPostsTableService?: BlogPostsTableServiceInterface;
@@ -21,25 +20,8 @@ export class DiContainer implements DiContainerInterface {
   private _plackiService?: PlackiServiceInterface;
   private _usersTableService?: UsersTableServiceInterface;
 
-  private constructor() {
-    this._postgres = new Sequelize('database', (process.env.USER as unknown) as string, '', {
-      dialect: 'postgres',
-      host: '127.0.0.1',
-      logging: console.log,
-      port: 5432,
-    });
-  }
-
-  public static getInstance(): DiContainer {
-    if (!this._instance) this._instance = new DiContainer();
-    return this._instance;
-  }
-
-  public async init(): Promise<void> {
-    await this._postgres.addModels([BlogPost, Comment, User]);
-    await this._postgres.sync({
-      force: true,
-    });
+  constructor(postgres: DatabaseProvider<Sequelize>) {
+    this._postgres = postgres.connection;
   }
 
   public get blogPostsTableService(): BlogPostsTableServiceInterface {

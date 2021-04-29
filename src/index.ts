@@ -1,15 +1,15 @@
 import fs from 'fs';
 import { DiContainer } from './core/di-container';
+import { PostgresProviderService } from './services';
 
 (async () => {
-  const dependencies = DiContainer.getInstance();
-  await dependencies.init();
+  const postgres = PostgresProviderService.getInstance();
+  await postgres.init();
+  const dependencies = new DiContainer(postgres);
 
   await dependencies.usersTableService.create();
-
   await dependencies.blogPostsTableService.create();
   await dependencies.blogPostsTableService.create();
-
   await dependencies.commentsTableService.create();
 
   const user = await dependencies.usersTableService.findOne(1);
