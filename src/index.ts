@@ -4,7 +4,9 @@ import { PostgresProviderService } from './services';
 
 (async () => {
   const postgres = PostgresProviderService.getInstance();
+
   await postgres.init();
+
   const dependencies = new DiContainer(postgres);
 
   await dependencies.usersTableService.create();
@@ -20,6 +22,7 @@ import { PostgresProviderService } from './services';
 
 // HOMEWORK
 
-// extract SQL query and paste into PGAdmin and check what SQL is returning
-// check other options for the include option in findOne query
 // do not read about many to many!! Try to figure out how many-to-many would work in SQL
+// implement a random service as a singleton - Math service - addition & subtraction - write my tests for it
+// Why Math can be implemented as a singleton
+// Why a service that holds some state could not be singleton
