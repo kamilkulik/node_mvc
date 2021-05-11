@@ -11,6 +11,7 @@ import {
 } from '../../services';
 import { Repository, Sequelize } from 'sequelize-typescript';
 import { BlogPost, Comment, User } from '../../models';
+import { UsersController } from '../../controllers';
 
 export class DiContainer implements DiContainerInterface {
   private _postgres: Sequelize;
@@ -18,6 +19,7 @@ export class DiContainer implements DiContainerInterface {
   private _blogPostsTableService?: BlogPostsTableServiceInterface;
   private _commentsTableService?: CommentsTableServiceInterface;
   private _plackiService?: PlackiServiceInterface;
+  private _usersController?: UsersController;
   private _usersTableService?: UsersTableServiceInterface;
 
   constructor(postgres: DatabaseProvider<Sequelize>) {
@@ -43,6 +45,13 @@ export class DiContainer implements DiContainerInterface {
   public get plackiService(): PlackiServiceInterface {
     if (!this._plackiService) this._plackiService = new PlackiService();
     return this._plackiService;
+  }
+
+  public get usersController(): UsersController {
+    if (!this._usersController) {
+      this._usersController = new UsersController(this.usersTableService);
+    }
+    return this._usersController;
   }
 
   public get usersTableService(): UsersTableServiceInterface {

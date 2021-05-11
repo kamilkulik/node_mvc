@@ -1,3 +1,5 @@
+import { getMaxListeners } from 'node:process';
+
 export class MathService implements MathServiceInterface {
   private static _instance: MathService;
 
