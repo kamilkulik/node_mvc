@@ -1,4 +1,5 @@
 import { Repository } from 'sequelize-typescript';
+import { Call } from '../../decorators';
 import { BlogPost, Comment, User } from '../../models';
 
 export class UsersTableService implements UsersTableServiceInterface {
@@ -8,6 +9,7 @@ export class UsersTableService implements UsersTableServiceInterface {
     this._repo = repo;
   }
 
+  @Call(console.log, 'calling UsersTableService#create')
   public create(): Promise<User> {
     return this._repo.create({
       email: 'przemwierzbicki@email.com',
