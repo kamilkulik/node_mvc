@@ -4,76 +4,42 @@ import { DatabaseProvider } from '../../services';
 
 export class DiContainer implements DiContainerInterface {
   private _postgres: Sequelize;
-  private _services: Map<any, any>;
-
-  /* simple implementation */
-  // private _services: { [index: string]: any };
+  private _services: Map<any, ServiceDescriptor>;
 
   constructor(postgres: DatabaseProvider<Sequelize>) {
     this._postgres = postgres.connection;
-    this._services = new Map<any, any>();
-
-    /* simple implementation */
-    // this._services = {};
+    this._services = new Map<any, ServiceDescriptor>();
   }
 
   public bind(service: any, options: BindOptions): void {
-    if (this._services.get(service)) throw new Error('');
-
-    if (options.scope === SCOPES.SINGLETON) {
-      //// . . . .
-      //// . . . .
-
-      class Singleton {
-        private static _instance: typeof service;
-
-        private constructor() {
-        }
-
-        public static getInstance(): typeof service {
-          if (!this._instance) this._instance = new service();
-          return this._instance;
-        }
-      }
-
-      //// . . . .
-      //// . . . .
-
-      this._services.set(service, {
-        scope: options.scope,
-        service: Singleton,
-      });
-    }
-
-    if (options.scope === SCOPES.TRANSIENT) {
-      this._services.set(service, {
-        scope: options.scope,
-        service,
-      });
-    }
+    this._services.set(service, new ServiceDescriptor(service, options.scope));
   }
-
-  /* simple implementation */
-  // public bind(service: any, name: string): void {
-  // if (!this._services[name]) this._services[name] = service;
-  // }
 
   public retrieve(service: any) {
-    const wrapperService = this._services.get(service);
+    return this._services.get(service)?.getInstance();
+  }
+}
 
-    if (wrapperService.scope === SCOPES.SINGLETON) {
-      return wrapperService.service.getInstance();
-    }
+export class ServiceDescriptor {
+  private _instance: any;
 
-    if (wrapperService.scope === SCOPES.TRANSIENT) {
-      return new wrapperService.service();
-    }
+  constructor(private _service: any, private _scope: SCOPES.SINGLETON | SCOPES.TRANSIENT) {
   }
 
-  /* simple implementation */
-  // public retrieve(name: string) {
-  //   return this._services[name];
-  // }
+  public getInstance() {
+    if (this._scope === SCOPES.SINGLETON) return this.getSingletonInstance();
+    if (this._scope === SCOPES.TRANSIENT) return this.getTransientInstance();
+  }
+
+  private getSingletonInstance() {
+    if (!this._instance) this._instance = new this._service();
+    return this._instance;
+  }
+
+  private getTransientInstance() {
+    return new this._service();
+  }
+
 }
 
 export interface BindOptions {
