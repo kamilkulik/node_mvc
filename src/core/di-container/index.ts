@@ -1,69 +1,84 @@
-import {
-  BlogPostsTableService,
-  BlogPostsTableServiceInterface,
-  CommentsTableService,
-  CommentsTableServiceInterface,
-  DatabaseProvider,
-  PlackiService,
-  PlackiServiceInterface,
-  UsersTableService,
-  UsersTableServiceInterface,
-} from '../../services';
-import { Repository, Sequelize } from 'sequelize-typescript';
-import { BlogPost, Comment, User } from '../../models';
-import { UsersController } from '../../controllers';
+import { Sequelize } from 'sequelize-typescript';
+import { SCOPES } from '../../constants';
+import { DatabaseProvider } from '../../services';
 
 export class DiContainer implements DiContainerInterface {
   private _postgres: Sequelize;
+  private _services: Map<any, any>;
 
-  private _blogPostsTableService?: BlogPostsTableServiceInterface;
-  private _commentsTableService?: CommentsTableServiceInterface;
-  private _plackiService?: PlackiServiceInterface;
-  private _usersController?: UsersController;
-  private _usersTableService?: UsersTableServiceInterface;
+  /* simple implementation */
+  // private _services: { [index: string]: any };
 
   constructor(postgres: DatabaseProvider<Sequelize>) {
     this._postgres = postgres.connection;
+    this._services = new Map<any, any>();
+
+    /* simple implementation */
+    // this._services = {};
   }
 
-  public get blogPostsTableService(): BlogPostsTableServiceInterface {
-    if (!this._blogPostsTableService) {
-      const repo: Repository<BlogPost> = this._postgres.getRepository<BlogPost>(BlogPost);
-      this._blogPostsTableService = new BlogPostsTableService(repo);
+  public bind(service: any, options: BindOptions): void {
+    if (this._services.get(service)) throw new Error('');
+
+    if (options.scope === SCOPES.SINGLETON) {
+      //// . . . .
+      //// . . . .
+
+      class Singleton {
+        private static _instance: typeof service;
+
+        private constructor() {
+        }
+
+        public static getInstance(): typeof service {
+          if (!this._instance) this._instance = new service();
+          return this._instance;
+        }
+      }
+
+      //// . . . .
+      //// . . . .
+
+      this._services.set(service, {
+        scope: options.scope,
+        service: Singleton,
+      });
     }
-    return this._blogPostsTableService;
-  }
 
-  public get commentsTableService(): CommentsTableServiceInterface {
-    if (!this._commentsTableService) {
-      const repo: Repository<Comment> = this._postgres.getRepository<Comment>(Comment);
-      this._commentsTableService = new CommentsTableService(repo);
+    if (options.scope === SCOPES.TRANSIENT) {
+      this._services.set(service, {
+        scope: options.scope,
+        service,
+      });
     }
-    return this._commentsTableService;
   }
 
-  public get plackiService(): PlackiServiceInterface {
-    if (!this._plackiService) this._plackiService = new PlackiService();
-    return this._plackiService;
-  }
+  /* simple implementation */
+  // public bind(service: any, name: string): void {
+  // if (!this._services[name]) this._services[name] = service;
+  // }
 
-  public get usersController(): UsersController {
-    if (!this._usersController) {
-      this._usersController = new UsersController(this.usersTableService);
+  public retrieve(service: any) {
+    const wrapperService = this._services.get(service);
+
+    if (wrapperService.scope === SCOPES.SINGLETON) {
+      return wrapperService.service.getInstance();
     }
-    return this._usersController;
+
+    if (wrapperService.scope === SCOPES.TRANSIENT) {
+      return new wrapperService.service();
+    }
   }
 
-  public get usersTableService(): UsersTableServiceInterface {
-    if (!this._usersTableService) {
-      const repo: Repository<User> = this._postgres.getRepository<User>(User);
-      this._usersTableService = new UsersTableService(repo);
-    }
-    return this._usersTableService;
-  }
+  /* simple implementation */
+  // public retrieve(name: string) {
+  //   return this._services[name];
+  // }
+}
+
+export interface BindOptions {
+  scope: SCOPES.SINGLETON | SCOPES.TRANSIENT;
 }
 
 export interface DiContainerInterface {
-  plackiService: PlackiServiceInterface;
-  usersTableService: UsersTableServiceInterface;
 }
