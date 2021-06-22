@@ -6,7 +6,8 @@ export class DiContainer implements DiContainerInterface {
   }
 
   public add(Service: any, options: AddOptions): ServiceDescriptorInterface {
-    const serviceDescriptor = options.scope === 'SINGLETON' ? new SingletonDescriptor(Service) : new TransientDescriptor(Service);
+    const serviceDescriptor =
+      options.scope === 'SINGLETON' ? new SingletonDescriptor(this, Service) : new TransientDescriptor(this, Service);
 
     this._services.set(Service, serviceDescriptor);
 
@@ -24,10 +25,12 @@ export class DiContainer implements DiContainerInterface {
 
 export class SingletonDescriptor implements ServiceDescriptorInterface {
   private _dependencies?: any[];
+  private _diContainer: DiContainerInterface;
   private _instance: any;
   private _Service: any;
 
-  constructor(Service: any) {
+  constructor(diContainer: DiContainerInterface, Service: any) {
+    this._diContainer = diContainer;
     this._Service = Service;
   }
 
@@ -38,7 +41,13 @@ export class SingletonDescriptor implements ServiceDescriptorInterface {
   }
 
   retrieve() {
-    if (!this._instance) this._instance = new this._Service(this._dependencies);
+    if (!this._instance) {
+      const dependencies = this._dependencies?.map((Service) => {
+        return this._diContainer.retrieve(Service);
+      });
+
+      this._instance = dependencies?.length ? new this._Service(...dependencies) : new this._Service();
+    }
 
     return this._instance;
   }
@@ -46,9 +55,11 @@ export class SingletonDescriptor implements ServiceDescriptorInterface {
 
 export class TransientDescriptor implements ServiceDescriptorInterface {
   private _dependencies?: any[];
+  private _diContainer: DiContainerInterface;
   private _Service: any;
 
-  constructor(Service: any) {
+  constructor(diContainer: DiContainerInterface, Service: any) {
+    this._diContainer = diContainer;
     this._Service = Service;
   }
 
@@ -59,7 +70,11 @@ export class TransientDescriptor implements ServiceDescriptorInterface {
   }
 
   retrieve() {
-    return new this._Service(this._dependencies);
+    const dependencies = this._dependencies?.map((Service) => {
+      return this._diContainer.retrieve(Service);
+    });
+
+    return dependencies?.length ? new this._Service(...dependencies) : new this._Service();
   }
 }
 
