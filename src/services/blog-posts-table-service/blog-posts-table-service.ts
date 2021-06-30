@@ -1,11 +1,12 @@
-import { Repository } from 'sequelize-typescript';
+import { Repository, Sequelize } from 'sequelize-typescript';
 import { BlogPost, User } from '../../models';
+import { DatabaseProvider } from '../postgres-provider-service';
 
 export class BlogPostsTableService implements BlogPostsTableServiceInterface {
   private _repo: Repository<BlogPost>;
 
-  constructor(repo: Repository<BlogPost>) {
-    this._repo = repo;
+  constructor(postgresProviderService: DatabaseProvider<Sequelize>) {
+    this._repo = postgresProviderService.connection.getRepository<BlogPost>(BlogPost);
   }
 
   public create(): Promise<BlogPost> {

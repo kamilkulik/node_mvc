@@ -1,11 +1,12 @@
-import { Repository } from 'sequelize-typescript';
+import { Repository, Sequelize } from 'sequelize-typescript';
 import { Comment } from '../../models';
+import { DatabaseProvider } from '../postgres-provider-service';
 
 export class CommentsTableService implements CommentsTableServiceInterface {
   private _repo: Repository<Comment>;
 
-  constructor(repo: Repository<Comment>) {
-    this._repo = repo;
+  constructor(postgresProviderService: DatabaseProvider<Sequelize>) {
+    this._repo = postgresProviderService.connection.getRepository<Comment>(Comment);
   }
 
   public create(): Promise<Comment> {
