@@ -21,5 +21,6 @@ export class BlogPostsTableService implements BlogPostsTableServiceInterface {
 
 export interface BlogPostsTableServiceInterface {
   create(CreateBlogPostDTO: CreateBlogPostDTO): Promise<BlogPost>;
+
   findOne(id: number): Promise<BlogPost | null>;
 }

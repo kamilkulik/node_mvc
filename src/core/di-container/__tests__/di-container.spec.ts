@@ -4,11 +4,14 @@ describe('diContainer', () => {
   describe('', () => {
     let dependencies: DiContainerInterface;
 
-    class SomeService {}
+    class SomeService {
+    }
 
     class PostgresUser {
-      constructor(public postgresProviderService: PostgresProviderService) {}
+      constructor(public postgresProviderService: PostgresProviderService) {
+      }
     }
+
     class PostgresProviderService {
       public TEST(string: string) {
         return string;

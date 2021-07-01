@@ -5,7 +5,8 @@ import { UsersTableServiceInterface } from '../services';
 import { ApiResponseServiceInterface } from '../services/api-response-service/api-response-service';
 
 export class UsersController {
-  constructor(private usersTableService: UsersTableServiceInterface, private apiService: ApiResponseServiceInterface) {}
+  constructor(private usersTableService: UsersTableServiceInterface, private apiService: ApiResponseServiceInterface) {
+  }
 
   public createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const user = await this.usersTableService.create(new CreateUserDTO(req.body));

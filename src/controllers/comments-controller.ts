@@ -8,7 +8,8 @@ export class CommentsController {
   constructor(
     private commentsTableService: CommentsTableServiceInterface,
     private apiService: ApiResponseServiceInterface
-  ) {}
+  ) {
+  }
 
   public createComment = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const comment = await this.commentsTableService.create(new CreateCommentDTO(req.body));

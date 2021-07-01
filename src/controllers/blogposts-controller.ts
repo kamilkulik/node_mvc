@@ -8,7 +8,8 @@ export class BlogPostsController {
   constructor(
     private blogpostsTableService: BlogPostsTableServiceInterface,
     private apiService: ApiResponseServiceInterface
-  ) {}
+  ) {
+  }
 
   public createBlogPost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const blogPost = await this.blogpostsTableService.create(new CreateBlogPostDTO(req.body));

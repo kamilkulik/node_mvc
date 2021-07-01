@@ -1,6 +1,6 @@
 import { Repository, Sequelize } from 'sequelize-typescript';
-import { CreateUserDTO } from '../../dtos';
 import { Call } from '../../decorators';
+import { CreateUserDTO } from '../../dtos';
 import { BlogPost, Comment, User } from '../../models';
 import { DatabaseProvider } from '../postgres-provider-service';
 
@@ -23,6 +23,7 @@ export class UsersTableService implements UsersTableServiceInterface {
 
 export interface UsersTableServiceInterface {
   create(createUserDTO: CreateUserDTO): Promise<User>;
+
   findOne(id: number): Promise<User | null>;
 }
 
