@@ -15,6 +15,7 @@ export enum RESPONSE_STATE {
 
 export interface ApiResponseServiceInterface {
   errorResponse<T>(error: string): ApiResponse<T>;
+
   successResponse<T>(message: string, payload: T): ApiResponse<T>;
 }
 

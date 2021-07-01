@@ -20,5 +20,6 @@ export class MathService implements MathServiceInterface {
 
 export interface MathServiceInterface {
   add(a: number, b: number): number;
+
   subtract(a: number, b: number): number;
 }

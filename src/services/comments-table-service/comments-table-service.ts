@@ -21,5 +21,6 @@ export class CommentsTableService implements CommentsTableServiceInterface {
 
 export interface CommentsTableServiceInterface {
   create(CreateCommentDTO: CreateCommentDTO): Promise<Comment>;
+
   findOne(id: number): Promise<Comment | null>;
 }

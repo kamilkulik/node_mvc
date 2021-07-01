@@ -80,6 +80,7 @@ export class TransientDescriptor implements ServiceDescriptorInterface {
 
 export interface DiContainerInterface {
   add(Service: any, options: AddOptions): ServiceDescriptorInterface;
+
   retrieve(Service: any): any;
 }
 
@@ -89,5 +90,6 @@ interface AddOptions {
 
 export interface ServiceDescriptorInterface {
   configureDependencies(...args: any[]): ServiceDescriptorInterface;
+
   retrieve(): any;
 }

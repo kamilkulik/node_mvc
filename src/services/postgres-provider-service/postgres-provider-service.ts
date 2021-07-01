@@ -1,4 +1,4 @@
-import { Repository, Sequelize } from 'sequelize-typescript';
+import { Sequelize } from 'sequelize-typescript';
 import { BlogPost, Comment, User } from '../../models';
 
 export class PostgresProviderService implements DatabaseProvider<Sequelize> {
@@ -13,6 +13,10 @@ export class PostgresProviderService implements DatabaseProvider<Sequelize> {
     });
   }
 
+  get connection(): Sequelize {
+    return this._postgres;
+  }
+
   public async init(): Promise<void> {
     await this._postgres.addModels([BlogPost, Comment, User]);
 
@@ -20,13 +24,10 @@ export class PostgresProviderService implements DatabaseProvider<Sequelize> {
       force: true,
     });
   }
-
-  get connection(): Sequelize {
-    return this._postgres;
-  }
 }
 
 export interface DatabaseProvider<T> {
   connection: T;
+
   init(): Promise<void>;
 }
