@@ -3,8 +3,13 @@ import express, { NextFunction, Request, Response } from 'express';
 import { BlogPostsController, CommentsController, UsersController } from './controllers';
 import { DiContainer } from './core/di-container';
 import { configureBlogpostsRouter, configureCommentsRouter, configureUsersRouter } from './routers';
-import { BlogPostsTableService, CommentsTableService, PostgresProviderService, UsersTableService } from './services';
-import { ApiResponseService } from './services/api-response-service/api-response-service';
+import {
+  ApiResponseService,
+  BlogPostsTableService,
+  CommentsTableService,
+  PostgresProviderService,
+  UsersTableService
+} from './services';
 
 (async () => {
   const dependencies = new DiContainer();
