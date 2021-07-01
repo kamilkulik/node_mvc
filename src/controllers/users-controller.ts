@@ -6,21 +6,27 @@ import { ApiResponseServiceInterface } from '../services/api-response-service/ap
 
 export class UsersController {
   constructor(private usersTableService: UsersTableServiceInterface, private apiService: ApiResponseServiceInterface) {
+    this.createUser = this.createUser.bind(this);
+    this.getUser = this.getUser.bind(this);
   }
 
-  public createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const user = await this.usersTableService.create(new CreateUserDTO(req.body));
+  public async createUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = await this.usersTableService.create(new CreateUserDTO(req.body));
 
-    if (!user) return next(new Error('no user!'));
+      res.send(this.apiService.successResponse<User>('success', user as User));
+    } catch (error) {
+      next(error);
+    }
+  }
 
-    res.send(this.apiService.successResponse<User>('success', user));
-  };
+  public async getUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const user = await this.usersTableService.findOne(Number(req.params.id));
 
-  public getUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const user = await this.usersTableService.findOne(Number(req.params.id));
-
-    if (!user) return next(new Error('no user!'));
-
-    res.send(this.apiService.successResponse<User>('success', user));
-  };
+      res.send(this.apiService.successResponse<User>('success', user as User));
+    } catch (error) {
+      next(error);
+    }
+  }
 }
