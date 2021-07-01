@@ -47,13 +47,13 @@ import { ApiResponseService } from './services/api-response-service/api-response
     .add(BlogPostsController, {
       scope: 'SINGLETON',
     })
-    .configureDependencies(BlogPostsTableService);
+    .configureDependencies(BlogPostsTableService, ApiResponseService);
 
   dependencies
     .add(CommentsController, {
       scope: 'SINGLETON',
     })
-    .configureDependencies(CommentsTableService);
+    .configureDependencies(CommentsTableService, ApiResponseService);
 
   const usersTableService = dependencies.retrieve(UsersTableService);
   await usersTableService.create();
@@ -86,7 +86,10 @@ import { ApiResponseService } from './services/api-response-service/api-response
 
 // HOMEWORK
 
-// add ApiResponseService to BlogPosts and Comments controllers
-// create a seprate folder for DTOs and export from there
-// ApiResposeService - index file, export from services
-// create methods for BlogPosts and Comments
+// [ DONE ] add ApiResponseService to BlogPosts and Comments controllers
+
+// [ DONE ] create a seprate folder for DTOs and export from there
+
+// [ DONE ] ApiResposeService - index file, export from services
+
+// [ DONE ] create methods for BlogPosts and Comments

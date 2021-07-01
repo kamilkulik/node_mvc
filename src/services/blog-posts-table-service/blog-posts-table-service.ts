@@ -1,4 +1,5 @@
 import { Repository, Sequelize } from 'sequelize-typescript';
+import { CreateBlogPostDTO } from '../../dtos';
 import { BlogPost, User } from '../../models';
 import { DatabaseProvider } from '../postgres-provider-service';
 
@@ -9,11 +10,8 @@ export class BlogPostsTableService implements BlogPostsTableServiceInterface {
     this._repo = postgresProviderService.connection.getRepository<BlogPost>(BlogPost);
   }
 
-  public create(): Promise<BlogPost> {
-    return this._repo.create({
-      content: 'content',
-      userId: 1,
-    });
+  public create(CreateBlogPostDTO: CreateBlogPostDTO): Promise<BlogPost> {
+    return this._repo.create(CreateBlogPostDTO);
   }
 
   public findOne(id: number): Promise<BlogPost | null> {
@@ -22,6 +20,6 @@ export class BlogPostsTableService implements BlogPostsTableServiceInterface {
 }
 
 export interface BlogPostsTableServiceInterface {
-  create(): Promise<BlogPost>;
+  create(CreateBlogPostDTO: CreateBlogPostDTO): Promise<BlogPost>;
   findOne(id: number): Promise<BlogPost | null>;
 }

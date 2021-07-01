@@ -1,4 +1,5 @@
 import { Repository, Sequelize } from 'sequelize-typescript';
+import { CreateCommentDTO } from '../../dtos';
 import { Comment } from '../../models';
 import { DatabaseProvider } from '../postgres-provider-service';
 
@@ -9,12 +10,8 @@ export class CommentsTableService implements CommentsTableServiceInterface {
     this._repo = postgresProviderService.connection.getRepository<Comment>(Comment);
   }
 
-  public create(): Promise<Comment> {
-    return this._repo.create({
-      blogPostId: 1,
-      content: 'content',
-      userId: 1,
-    });
+  public create(CreateCommentDTO: CreateCommentDTO): Promise<Comment> {
+    return this._repo.create(CreateCommentDTO);
   }
 
   public findOne(id: number): Promise<Comment | null> {
@@ -23,6 +20,6 @@ export class CommentsTableService implements CommentsTableServiceInterface {
 }
 
 export interface CommentsTableServiceInterface {
-  create(): Promise<Comment>;
+  create(CreateCommentDTO: CreateCommentDTO): Promise<Comment>;
   findOne(id: number): Promise<Comment | null>;
 }

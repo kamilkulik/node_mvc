@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
+import { CreateUserDTO } from '../dtos';
 import { User } from '../models';
-import { CreateUserDTO, UsersTableServiceInterface } from '../services';
+import { UsersTableServiceInterface } from '../services';
 import { ApiResponseServiceInterface } from '../services/api-response-service/api-response-service';
 
 export class UsersController {

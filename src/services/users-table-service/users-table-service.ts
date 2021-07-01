@@ -1,17 +1,8 @@
 import { Repository, Sequelize } from 'sequelize-typescript';
+import { CreateUserDTO } from '../../dtos';
 import { Call } from '../../decorators';
 import { BlogPost, Comment, User } from '../../models';
 import { DatabaseProvider } from '../postgres-provider-service';
-
-export class CreateUserDTO {
-  public readonly email: string;
-  public readonly password: string;
-
-  constructor(d: { email: string; password: string }) {
-    this.email = d.email;
-    this.password = d.password;
-  }
-}
 
 export class UsersTableService implements UsersTableServiceInterface {
   private _repo: Repository<User>;
