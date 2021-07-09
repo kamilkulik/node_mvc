@@ -8,7 +8,7 @@ import {
   BlogPostsTableService,
   CommentsTableService,
   PostgresProviderService,
-  UsersTableService
+  UsersTableService,
 } from './services';
 
 (async () => {
@@ -91,10 +91,8 @@ import {
 
 // HOMEWORK
 
-// [ DONE ] add ApiResponseService to BlogPosts and Comments controllers
+// add additional validator to user DTO password - implement password policy
 
-// [ DONE ] create a seprate folder for DTOs and export from there
+// adjust controllers - add try catch
 
-// [ DONE ] ApiResposeService - index file, export from services
-
-// [ DONE ] create methods for BlogPosts and Comments
+// class based decorator to bind methods to this
