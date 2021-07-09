@@ -17,7 +17,7 @@ export class DiContainer implements DiContainerInterface {
   public retrieve(Service: any): any {
     const serviceDescriptor: ServiceDescriptorInterface | undefined = this._services.get(Service);
 
-    if (!serviceDescriptor) throw new Error(`no service descriptor for service: ${Service.name}`);
+    if (!serviceDescriptor) throw new Error('no service descriptor');
 
     return serviceDescriptor.retrieve();
   }
