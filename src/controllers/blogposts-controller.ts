@@ -8,22 +8,25 @@ export class BlogPostsController {
   constructor(
     private blogpostsTableService: BlogPostsTableServiceInterface,
     private apiService: ApiResponseServiceInterface
-  ) {
-  }
+  ) {}
 
   public createBlogPost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const blogPost = await this.blogpostsTableService.create(new CreateBlogPostDTO(req.body));
+    try {
+      const blogPost = await this.blogpostsTableService.create(new CreateBlogPostDTO(req.body));
 
-    if (!blogPost) return next(new Error('error creating blogPost'));
-
-    res.send(this.apiService.successResponse<BlogPost>('success', blogPost));
+      res.send(this.apiService.successResponse<BlogPost>('success', blogPost));
+    } catch (error) {
+      next(error);
+    }
   };
 
   public getBlogPost = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const blogPost = await this.blogpostsTableService.findOne(Number(req.params.id));
+    try {
+      const blogPost = await this.blogpostsTableService.findOne(Number(req.params.id));
 
-    if (!blogPost) return next(new Error('no blogPost!'));
-
-    res.send(this.apiService.successResponse<BlogPost>('success', blogPost));
+      res.send(this.apiService.successResponse<BlogPost>('success', blogPost as BlogPost));
+    } catch (error) {
+      next(error);
+    }
   };
 }
