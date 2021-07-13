@@ -1,8 +1,7 @@
 import bodyParser from 'body-parser';
-import express, { NextFunction, Request, Response } from 'express';
+import express, { NextFunction, Request, Response, Router } from 'express';
 import { BlogPostsController, CommentsController, UsersController } from './controllers';
-import { DiContainer } from './core/di-container';
-import { configureBlogpostsRouter, configureCommentsRouter, configureUsersRouter } from './routers';
+import { DiContainer, DiContainerInterface } from './core/di-container';
 import {
   ApiResponseService,
   BlogPostsTableService,
@@ -10,6 +9,7 @@ import {
   PostgresProviderService,
   UsersTableService,
 } from './services';
+import { routes, RouteOptions } from './routes';
 
 (async () => {
   const dependencies = new DiContainer();
@@ -74,11 +74,21 @@ import {
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
 
-  app.use('/blogposts', configureBlogpostsRouter(dependencies.retrieve(BlogPostsController)));
+  function configureRouter(dependencies: DiContainerInterface, options: RouteOptions) {
+    const router = Router();
 
-  app.use('/comments', configureCommentsRouter(dependencies.retrieve(CommentsController)));
+    const controller = dependencies.retrieve(options.controller);
 
-  app.use('/users', configureUsersRouter(dependencies.retrieve(UsersController)));
+    for (let endpoint of options.endpoints) {
+      router[endpoint.method](endpoint.path, controller[endpoint.cb]);
+    }
+
+    return router;
+  }
+
+  for (let route of routes) {
+    app.use(route.base, configureRouter(dependencies, route.options));
+  }
 
   app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
     const apiService: ApiResponseService = dependencies.retrieve(ApiResponseService);
