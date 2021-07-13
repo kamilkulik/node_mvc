@@ -5,7 +5,7 @@
 // The name of the member.
 // The Property Descriptor for the member.
 
-function bindThis() {
+function BindToThis() {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
