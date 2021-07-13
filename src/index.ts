@@ -98,11 +98,3 @@ import { routes, RouteOptions } from './routes';
 
   app.listen(3000, () => console.log('Listening on 3000'));
 })();
-
-// HOMEWORK
-
-// add additional validator to user DTO password - implement password policy
-
-// adjust controllers - add try catch
-
-// class based decorator to bind methods to this
