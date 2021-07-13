@@ -1,7 +1,7 @@
 import bodyParser from 'body-parser';
-import express, { Express, NextFunction, Request, Response, Router } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { BlogPostsController, CommentsController, UsersController } from './controllers';
-import { DiContainer, DiContainerInterface } from './core/di-container';
+import { DiContainer } from './core/di-container';
 import {
   ApiResponseService,
   BlogPostsTableService,
@@ -9,7 +9,7 @@ import {
   PostgresProviderService,
   UsersTableService,
 } from './services';
-import { routes, RouteOptions, Route, configureRouter } from './routes';
+import { routes, configureRouter } from './routes';
 
 (async () => {
   const dependencies = new DiContainer();
