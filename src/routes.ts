@@ -1,6 +1,20 @@
 import { BlogPostsController, CommentsController, UsersController } from './controllers';
+import { Express, Router } from 'express';
+import { DiContainerInterface } from './core/di-container';
 
-type Route = {
+export function configureRouter(app: Express, dependencies: DiContainerInterface, route: Route) {
+  const router = Router();
+
+  const controller = dependencies.retrieve(route.options.controller);
+
+  for (let endpoint of route.options.endpoints) {
+    router[endpoint.method](endpoint.path, controller[endpoint.cb]);
+  }
+
+  app.use(route.base, router);
+}
+
+export type Route = {
   base: string;
   options: RouteOptions;
 };

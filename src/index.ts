@@ -1,5 +1,5 @@
 import bodyParser from 'body-parser';
-import express, { NextFunction, Request, Response, Router } from 'express';
+import express, { Express, NextFunction, Request, Response, Router } from 'express';
 import { BlogPostsController, CommentsController, UsersController } from './controllers';
 import { DiContainer, DiContainerInterface } from './core/di-container';
 import {
@@ -9,7 +9,7 @@ import {
   PostgresProviderService,
   UsersTableService,
 } from './services';
-import { routes, RouteOptions } from './routes';
+import { routes, RouteOptions, Route, configureRouter } from './routes';
 
 (async () => {
   const dependencies = new DiContainer();
@@ -74,20 +74,8 @@ import { routes, RouteOptions } from './routes';
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
 
-  function configureRouter(dependencies: DiContainerInterface, options: RouteOptions) {
-    const router = Router();
-
-    const controller = dependencies.retrieve(options.controller);
-
-    for (let endpoint of options.endpoints) {
-      router[endpoint.method](endpoint.path, controller[endpoint.cb]);
-    }
-
-    return router;
-  }
-
   for (let route of routes) {
-    app.use(route.base, configureRouter(dependencies, route.options));
+    configureRouter(app, dependencies, route);
   }
 
   app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
@@ -98,3 +86,24 @@ import { routes, RouteOptions } from './routes';
 
   app.listen(3000, () => console.log('Listening on 3000'));
 })();
+
+/*
+
+  for (let route of routes) {
+    app.use(
+      route.base,
+      (function configureRouter(dependencies: DiContainerInterface, options: RouteOptions) {
+        const router = Router();
+
+        const controller = dependencies.retrieve(options.controller);
+
+        for (let endpoint of options.endpoints) {
+          router[endpoint.method](endpoint.path, controller[endpoint.cb]);
+        }
+
+        return router;
+      })(dependencies, route.options)
+    );
+  }
+
+  */
