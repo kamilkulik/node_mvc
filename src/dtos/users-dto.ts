@@ -4,66 +4,72 @@ import validator from 'validator';
 // SPECIFICATION
 // COMPOSITE
 
+class Status {
+  constructor(public satisfied: boolean, public messages: string[]) {}
+}
+
 interface SpecificationInterface<T> {
-  isSatisfied(item: T): Error | boolean;
+  isSatisfied(item: T): Status;
 }
 
 class MinLengthSpecification implements SpecificationInterface<string> {
   constructor(private _minLength: number) {}
 
-  public isSatisfied(item: string): boolean {
-    return item.length >= this._minLength;
+  public isSatisfied(item: string): Status {
+    const satisfied = item.length >= this._minLength;
+    const messages = satisfied ? [] : ['Specification not satisfied: MinLengthSpecification'];
+    return new Status(satisfied, messages);
   }
 }
 
 class MinNumbersSpecification implements SpecificationInterface<string> {
   constructor(private _minNumbers: number) {}
 
-  public isSatisfied(item: string): Error | boolean {
+  public isSatisfied(item: string): Status {
     let counter = 0;
     const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     for (let char of item.split('')) {
       if (numbers.includes(char)) counter++;
-      if (counter === this._minNumbers) return true;
+      if (counter === this._minNumbers) return new Status(true, []);
     }
-    throw new Error(`Password needs to have at least ${this._minNumbers} numbers`);
+    return new Status(false, ['Specification not satisfied: MinNumbersSpecification']);
   }
 }
 
 class MinLowerCaseSpecification implements SpecificationInterface<string> {
   constructor(private _minLowerCaseChars: number) {}
 
-  public isSatisfied(item: string): Error | boolean {
+  public isSatisfied(item: string): Status {
     const asciiLowerCaseCharCodes = { first: 97, last: 122 };
     let counter = 0;
     for (let char of item.split('')) {
       const charAsciiCode = char.charCodeAt(0);
       if (charAsciiCode >= asciiLowerCaseCharCodes.first && charAsciiCode <= asciiLowerCaseCharCodes.last) counter++;
-      if (counter === this._minLowerCaseChars) return true;
+      if (counter === this._minLowerCaseChars) return new Status(true, []);
     }
-    throw new Error(`Password needs to have at least ${this._minLowerCaseChars} characters`);
+    return new Status(false, ['Specification not satisfied: MinLowerCaseSpecification']);
   }
 }
 
 class MinUpperCaseSpecification implements SpecificationInterface<string> {
   constructor(private _minUpperCaseChars: number) {}
 
-  public isSatisfied(item: string): Error | boolean {
+  public isSatisfied(item: string): Status {
     const asciiUpperCaseCharCodes = { first: 65, last: 90 };
     let counter = 0;
     for (let char of item.split('')) {
       const charAsciiCode = char.charCodeAt(0);
       if (charAsciiCode >= asciiUpperCaseCharCodes.first && charAsciiCode <= asciiUpperCaseCharCodes.last) counter++;
-      if (counter === this._minUpperCaseChars) return true;
+      if (counter === this._minUpperCaseChars) return new Status(true, []);
     }
-    throw new Error(`Password needs to have at least ${this._minUpperCaseChars} characters`);
+    return new Status(false, ['Specification not satisfied: MinUpperCaseSpecification']);
   }
 }
 
 class MinSymbolsSpecification implements SpecificationInterface<string> {
   constructor(private _minSymbolsChars: number) {}
 
-  public isSatisfied(item: string): Error | boolean {
+  public isSatisfied(item: string): Status {
     function* range(start: number, end: number) {
       for (let i = start; i <= end; i++) {
         yield i;
@@ -75,9 +81,9 @@ class MinSymbolsSpecification implements SpecificationInterface<string> {
     for (let char of item.split('')) {
       const charAsciiCode = char.charCodeAt(0);
       if (specialCharacters.includes(charAsciiCode)) counter++;
-      if (counter === this._minSymbolsChars) return true;
+      if (counter === this._minSymbolsChars) return new Status(true, []);
     }
-    throw new Error(`Password needs to have at least ${this._minSymbolsChars} special characters`);
+    return new Status(false, ['Specification not satisfied: MinSymbolsSpecification']);
   }
 }
 
@@ -95,15 +101,16 @@ class CompositeSpecification
     return this;
   }
 
-  isSatisfied(item: string): Error | boolean {
+  isSatisfied(item: string): Status {
+    const status = new Status(true, []);
     for (let specification of this._specifications) {
-      try {
-        specification.isSatisfied(item);
-      } catch (error) {
-        throw new Error(error);
+      const s = specification.isSatisfied(item);
+      if (!s.satisfied) {
+        status.satisfied = false;
+        status.messages = status.messages.concat(s.messages);
       }
     }
-    return true;
+    return status;
   }
 }
 
@@ -135,13 +142,13 @@ export class CreateUserDTO {
       .compose(new MinUpperCaseSpecification(1))
       .compose(new MinSymbolsSpecification(1));
 
-    // if (!compositeSpecification.isSatisfied(password)) throw new Error();
-    try {
-      compositeSpecification.isSatisfied(password);
-    } catch (error) {
-      // TODO, collect errors from all Specifications
-      throw new Error(error.message);
-    }
+    // Recursive composite testing:
+    // const compositeSpecification2 = new CompositeSpecification();
+    // compositeSpecification2.compose(new MinUpperCaseSpecification(1)).compose(new MinSymbolsSpecification(1));
+    // compositeSpecification.compose(compositeSpecification2);
+
+    const status = compositeSpecification.isSatisfied(password);
+    if (!status.satisfied) throw new Error(status.messages.join('. '));
 
     this.email = email;
     this.password = password;
@@ -154,5 +161,4 @@ export type CreateUserProperties = {
 };
 
 // HOMEWORK
-// implement: minSymbols, minUpperCase, minLowerCase
 // next session: validator.isEmail()
