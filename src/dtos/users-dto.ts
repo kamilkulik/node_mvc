@@ -30,6 +30,57 @@ class MinNumbersSpecification implements SpecificationInterface<string> {
   }
 }
 
+class MinLowerCaseSpecification implements SpecificationInterface<string> {
+  constructor(private _minLowerCaseChars: number) {}
+
+  public isSatisfied(item: string): boolean {
+    const asciiLowerCaseCharCodes = { first: 97, last: 122 };
+    let counter = 0;
+    for (let char of item.split('')) {
+      const charAsciiCode = char.charCodeAt(0);
+      if (charAsciiCode >= asciiLowerCaseCharCodes.first && charAsciiCode <= asciiLowerCaseCharCodes.last) counter++;
+      if (counter === this._minLowerCaseChars) return true;
+    }
+    return false;
+  }
+}
+
+class MinUpperCaseSpecification implements SpecificationInterface<string> {
+  constructor(private _minUpperCaseChars: number) {}
+
+  public isSatisfied(item: string): boolean {
+    const asciiUpperCaseCharCodes = { first: 65, last: 90 };
+    let counter = 0;
+    for (let char of item.split('')) {
+      const charAsciiCode = char.charCodeAt(0);
+      if (charAsciiCode >= asciiUpperCaseCharCodes.first && charAsciiCode <= asciiUpperCaseCharCodes.last) counter++;
+      if (counter === this._minUpperCaseChars) return true;
+    }
+    return false;
+  }
+}
+
+class MinSymbolsSpecification implements SpecificationInterface<string> {
+  constructor(private _minSymbolsChars: number) {}
+
+  public isSatisfied(item: string): boolean {
+    function* range(start: number, end: number) {
+      for (let i = start; i <= end; i++) {
+        yield i;
+      }
+    }
+
+    const specialCharacters = [...range(33, 47), ...range(58, 64), ...range(91, 96), ...range(123, 126)];
+    let counter = 0;
+    for (let char of item.split('')) {
+      const charAsciiCode = char.charCodeAt(0);
+      if (specialCharacters.includes(charAsciiCode)) counter++;
+      if (counter === this._minSymbolsChars) return true;
+    }
+    return false;
+  }
+}
+
 interface CompositeInterface<T> {
   compose(item: T): CompositeInterface<T>;
 }
@@ -73,7 +124,12 @@ export class CreateUserDTO {
     // }
 
     const compositeSpecification = new CompositeSpecification();
-    compositeSpecification.compose(new MinLengthSpecification(8)).compose(new MinNumbersSpecification(1));
+    compositeSpecification
+      .compose(new MinLengthSpecification(8))
+      .compose(new MinNumbersSpecification(1))
+      .compose(new MinLowerCaseSpecification(1))
+      .compose(new MinUpperCaseSpecification(1))
+      .compose(new MinSymbolsSpecification(1));
 
     if (!compositeSpecification.isSatisfied(password)) throw new Error();
 
