@@ -5,7 +5,7 @@ import validator from 'validator';
 // COMPOSITE
 
 interface SpecificationInterface<T> {
-  isSatisfied(item: T): boolean;
+  isSatisfied(item: T): Error | boolean;
 }
 
 class MinLengthSpecification implements SpecificationInterface<string> {
@@ -19,21 +19,21 @@ class MinLengthSpecification implements SpecificationInterface<string> {
 class MinNumbersSpecification implements SpecificationInterface<string> {
   constructor(private _minNumbers: number) {}
 
-  public isSatisfied(item: string): boolean {
+  public isSatisfied(item: string): Error | boolean {
     let counter = 0;
     const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
     for (let char of item.split('')) {
       if (numbers.includes(char)) counter++;
       if (counter === this._minNumbers) return true;
     }
-    return false;
+    throw new Error(`Password needs to have at least ${this._minNumbers} numbers`);
   }
 }
 
 class MinLowerCaseSpecification implements SpecificationInterface<string> {
   constructor(private _minLowerCaseChars: number) {}
 
-  public isSatisfied(item: string): boolean {
+  public isSatisfied(item: string): Error | boolean {
     const asciiLowerCaseCharCodes = { first: 97, last: 122 };
     let counter = 0;
     for (let char of item.split('')) {
@@ -41,14 +41,14 @@ class MinLowerCaseSpecification implements SpecificationInterface<string> {
       if (charAsciiCode >= asciiLowerCaseCharCodes.first && charAsciiCode <= asciiLowerCaseCharCodes.last) counter++;
       if (counter === this._minLowerCaseChars) return true;
     }
-    return false;
+    throw new Error(`Password needs to have at least ${this._minLowerCaseChars} characters`);
   }
 }
 
 class MinUpperCaseSpecification implements SpecificationInterface<string> {
   constructor(private _minUpperCaseChars: number) {}
 
-  public isSatisfied(item: string): boolean {
+  public isSatisfied(item: string): Error | boolean {
     const asciiUpperCaseCharCodes = { first: 65, last: 90 };
     let counter = 0;
     for (let char of item.split('')) {
@@ -56,14 +56,14 @@ class MinUpperCaseSpecification implements SpecificationInterface<string> {
       if (charAsciiCode >= asciiUpperCaseCharCodes.first && charAsciiCode <= asciiUpperCaseCharCodes.last) counter++;
       if (counter === this._minUpperCaseChars) return true;
     }
-    return false;
+    throw new Error(`Password needs to have at least ${this._minUpperCaseChars} characters`);
   }
 }
 
 class MinSymbolsSpecification implements SpecificationInterface<string> {
   constructor(private _minSymbolsChars: number) {}
 
-  public isSatisfied(item: string): boolean {
+  public isSatisfied(item: string): Error | boolean {
     function* range(start: number, end: number) {
       for (let i = start; i <= end; i++) {
         yield i;
@@ -77,7 +77,7 @@ class MinSymbolsSpecification implements SpecificationInterface<string> {
       if (specialCharacters.includes(charAsciiCode)) counter++;
       if (counter === this._minSymbolsChars) return true;
     }
-    return false;
+    throw new Error(`Password needs to have at least ${this._minSymbolsChars} special characters`);
   }
 }
 
@@ -95,9 +95,13 @@ class CompositeSpecification
     return this;
   }
 
-  isSatisfied(item: string): boolean {
+  isSatisfied(item: string): Error | boolean {
     for (let specification of this._specifications) {
-      if (!specification.isSatisfied(item)) return false;
+      try {
+        specification.isSatisfied(item);
+      } catch (error) {
+        throw new Error(error);
+      }
     }
     return true;
   }
@@ -131,7 +135,13 @@ export class CreateUserDTO {
       .compose(new MinUpperCaseSpecification(1))
       .compose(new MinSymbolsSpecification(1));
 
-    if (!compositeSpecification.isSatisfied(password)) throw new Error();
+    // if (!compositeSpecification.isSatisfied(password)) throw new Error();
+    try {
+      compositeSpecification.isSatisfied(password);
+    } catch (error) {
+      // TODO, collect errors from all Specifications
+      throw new Error(error.message);
+    }
 
     this.email = email;
     this.password = password;
