@@ -1,8 +1,9 @@
-import validator from 'validator';
-
 // PATTERNS USED:
 // SPECIFICATION
 // COMPOSITE
+
+import { BlogPost } from '../models';
+import { BlogPostResponseDTO } from './blogposts-dto';
 
 class Status {
   constructor(public satisfied: boolean, public messages: string[]) {}
@@ -114,39 +115,24 @@ class CompositeSpecification
   }
 }
 
+const compositeSpecification = new CompositeSpecification();
+compositeSpecification
+  .compose(new MinLengthSpecification(8))
+  .compose(new MinNumbersSpecification(1))
+  .compose(new MinLowerCaseSpecification(1))
+  .compose(new MinUpperCaseSpecification(1))
+  .compose(new MinSymbolsSpecification(1));
+
+// Recursive composite testing:
+// const compositeSpecification2 = new CompositeSpecification();
+// compositeSpecification2.compose(new MinUpperCaseSpecification(1)).compose(new MinSymbolsSpecification(1));
+// compositeSpecification.compose(compositeSpecification2);
+
 export class CreateUserDTO {
   public readonly email: string;
   public readonly password: string;
 
   constructor({ email, password }: CreateUserProperties) {
-    // if (!validator.isEmail(email)) throw new Error('field: "email": must be an email!');
-    // if (
-    //   !validator.isStrongPassword(password, {
-    //     minLength: 8,
-    //     minLowercase: 1,
-    //     minNumbers: 1,
-    //     minSymbols: 1,
-    //     minUppercase: 1,
-    //   })
-    // ) {
-    //   throw new Error(
-    //     'field: "password": must be at least 8 characters long, have at least 1 lowercase, 1 uppercase letter, 1 number and include at least 1 symbol'
-    //   );
-    // }
-
-    const compositeSpecification = new CompositeSpecification();
-    compositeSpecification
-      .compose(new MinLengthSpecification(8))
-      .compose(new MinNumbersSpecification(1))
-      .compose(new MinLowerCaseSpecification(1))
-      .compose(new MinUpperCaseSpecification(1))
-      .compose(new MinSymbolsSpecification(1));
-
-    // Recursive composite testing:
-    // const compositeSpecification2 = new CompositeSpecification();
-    // compositeSpecification2.compose(new MinUpperCaseSpecification(1)).compose(new MinSymbolsSpecification(1));
-    // compositeSpecification.compose(compositeSpecification2);
-
     const status = compositeSpecification.isSatisfied(password);
     if (!status.satisfied) throw new Error(status.messages.join('. '));
 
@@ -160,5 +146,33 @@ export type CreateUserProperties = {
   password: string;
 };
 
+export class UserResponseDTO {
+  public readonly id: number;
+  public readonly email: string;
+  public readonly blogPosts: BlogPostResponseDTO[];
+  public readonly comments: any;
+  public readonly createdAt: Date;
+  public readonly updatedAt: Date;
+
+  constructor({ id, email, blogPosts, comments, createdAt, updatedAt }: UserResponseProperties) {
+    this.id = id;
+    this.email = email;
+    this.blogPosts = blogPosts ? blogPosts.map((bp) => new BlogPostResponseDTO(bp)) : [];
+    this.comments = comments;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+  }
+}
+
+export type UserResponseProperties = {
+  id: number;
+  email: string;
+  blogPosts?: BlogPost[];
+  comments?: any;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
 // HOMEWORK
-// next session: validator.isEmail()
+// validator.isEmail() inside a specification
+// add CommentsResponseDTO

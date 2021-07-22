@@ -8,7 +8,7 @@ export class User extends Model {
   @Column({
     autoIncrement: true,
   })
-  public id?: number;
+  public id!: number;
 
   @Column({
     unique: true,

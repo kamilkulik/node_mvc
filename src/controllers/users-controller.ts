@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateUserDTO } from '../dtos';
+import { CreateUserDTO, UserResponseDTO } from '../dtos';
 import { User } from '../models';
 import { UsersTableServiceInterface } from '../services';
 import { ApiResponseServiceInterface } from '../services/api-response-service/api-response-service';
@@ -14,7 +14,7 @@ export class UsersController {
     try {
       const user = await this.usersTableService.create(new CreateUserDTO(req.body));
 
-      res.send(this.apiService.successResponse<User>('success', user as User));
+      res.send(this.apiService.successResponse<UserResponseDTO>('success', new UserResponseDTO(user)));
     } catch (error) {
       next(error);
     }
