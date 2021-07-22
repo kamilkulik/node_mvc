@@ -7,7 +7,7 @@ import {
   Model,
   PrimaryKey,
   Table,
-  UpdatedAt
+  UpdatedAt,
 } from 'sequelize-typescript';
 import { Comment } from '../comment';
 import { User } from '../user';
@@ -18,7 +18,7 @@ export class BlogPost extends Model {
   @Column({
     autoIncrement: true,
   })
-  public id?: number;
+  public id!: number;
 
   @Column
   public content!: string;
