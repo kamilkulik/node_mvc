@@ -6,6 +6,7 @@ import {
   ApiResponseService,
   BlogPostsTableService,
   CommentsTableService,
+  MapperService,
   PostgresProviderService,
   UsersTableService,
 } from './services';
@@ -21,6 +22,10 @@ import { routes, configureRouter } from './routes';
   await postgresProviderService.init();
 
   dependencies.add(ApiResponseService, {
+    scope: 'TRANSIENT',
+  });
+
+  dependencies.add(MapperService, {
     scope: 'TRANSIENT',
   });
 
@@ -46,7 +51,7 @@ import { routes, configureRouter } from './routes';
     .add(UsersController, {
       scope: 'SINGLETON',
     })
-    .configureDependencies(UsersTableService, ApiResponseService);
+    .configureDependencies(UsersTableService, ApiResponseService, MapperService);
 
   dependencies
     .add(BlogPostsController, {
