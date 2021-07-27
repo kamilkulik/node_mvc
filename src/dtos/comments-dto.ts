@@ -20,7 +20,7 @@ export class CommentResponseDTO {
   public readonly blogPostId: number;
   public readonly content: string;
   public readonly createdAt: Date;
-  public readonly id: number;
+  public readonly id?: number;
   public readonly updatedAt: Date;
   public readonly userId: number;
 
@@ -38,7 +38,7 @@ export type CommentResponseProperties = {
   blogPostId: number;
   content: string;
   createdAt: Date;
-  id: number;
+  id?: number;
   updatedAt: Date;
   userId: number;
 };

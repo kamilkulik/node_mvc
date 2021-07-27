@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { CreateBlogPostDTO } from '../dtos';
+import { CreateBlogPostDTO, BlogPostResponseDTO } from '../dtos';
 import { BlogPost } from '../models';
 import { BlogPostsTableServiceInterface } from '../services';
 import { ApiResponseServiceInterface } from '../services/api-response-service/api-response-service';
@@ -14,7 +14,7 @@ export class BlogPostsController {
     try {
       const blogPost = await this.blogpostsTableService.create(new CreateBlogPostDTO(req.body));
 
-      res.send(this.apiService.successResponse<BlogPost>('success', blogPost));
+      res.send(this.apiService.successResponse<BlogPostResponseDTO>('success', new BlogPostResponseDTO(blogPost)));
     } catch (error) {
       next(error);
     }
@@ -24,7 +24,9 @@ export class BlogPostsController {
     try {
       const blogPost = await this.blogpostsTableService.findOne(Number(req.params.id));
 
-      res.send(this.apiService.successResponse<BlogPost>('success', blogPost as BlogPost));
+      res.send(
+        this.apiService.successResponse<BlogPostResponseDTO>('success', new BlogPostResponseDTO(blogPost as BlogPost))
+      );
     } catch (error) {
       next(error);
     }

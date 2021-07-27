@@ -36,11 +36,11 @@ export const routes: Route[] = [
     options: {
       controller: BlogPostsController,
       endpoints: [
-        // {
-        //   cb: 'createBlogPost',
-        //   method: 'post',
-        //   path: '/',
-        // },
+        {
+          cb: 'createBlogPost',
+          method: 'post',
+          path: '/',
+        },
         {
           cb: 'getBlogPost',
           method: 'get',
@@ -54,11 +54,11 @@ export const routes: Route[] = [
     options: {
       controller: CommentsController,
       endpoints: [
-        // {
-        //   cb: 'createComment',
-        //   method: 'post',
-        //   path: '/',
-        // },
+        {
+          cb: 'createComment',
+          method: 'post',
+          path: '/',
+        },
         {
           cb: 'getComment',
           method: 'get',
