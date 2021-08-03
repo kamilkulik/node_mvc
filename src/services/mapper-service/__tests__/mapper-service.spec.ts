@@ -18,7 +18,7 @@ describe('MapperService', () => {
 
       const user = new User(1, 'Doge', 'MuchWow');
       const mapper = new MapperService();
-      const userResponse = mapper.map<User, UserResponseDTO>(user, UserResponseDTO);
+      const userResponse = mapper.mapToDTO<User, UserResponseDTO>(user, UserResponseDTO);
 
       expect(userResponse.id).toBe(user.id);
       expect(userResponse.username).toBe(user.username);
