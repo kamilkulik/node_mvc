@@ -16,9 +16,10 @@ export class UsersController {
 
   public async createUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userProperties = this.mapper.map<any, CreateUserDTO>(req.body, CreateUserDTO);
+      const userProperties = this.mapper.mapToDTO<any, CreateUserDTO>(req.body, CreateUserDTO);
       const user = await this.usersTableService.create(userProperties);
-      const response = this.mapper.map<User, UserResponseDTO>(user, UserResponseDTO);
+      const response = this.mapper.mapToDTO<User, UserResponseDTO>(user, UserResponseDTO);
+
       res.send(this.apiService.successResponse<UserResponseDTO>('success', response));
     } catch (error) {
       next(error);
@@ -34,7 +35,9 @@ export class UsersController {
         return;
       }
 
-      res.send(this.apiService.successResponse<UserResponseDTO>('success', new UserResponseDTO(user)));
+      const response = this.mapper.mapToDTO<User, UserResponseDTO>(user, UserResponseDTO);
+
+      res.send(this.apiService.successResponse<UserResponseDTO>('success', response));
     } catch (error) {
       next(error);
     }
