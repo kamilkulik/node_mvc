@@ -175,4 +175,3 @@ export type UserResponseProperties = {
 
 // HOMEWORK
 // validator.isEmail() inside a specification
-// add CommentsResponseDTO
